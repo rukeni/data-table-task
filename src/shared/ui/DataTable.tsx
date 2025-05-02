@@ -6,8 +6,22 @@ import React, { useState, useMemo } from 'react';
 import { MoreOutlined } from '@ant-design/icons';
 import { Checkbox, Dropdown, Button, Table, Modal } from 'antd';
 
+import { useStore } from '@/store';
 import { RecordForm } from '@/shared/ui/RecordForm';
-import { FieldValue, useStore, Record } from '@/store/memberSlice';
+import { FieldValue, Record, Field } from '@/store/memberSlice';
+
+const formatValue = (value: FieldValue, type: string): string => {
+  if (value === undefined || value === null) {
+    return '';
+  }
+  if (type === 'date' && value instanceof Date) {
+    return dayjs(value).format('YYYY-MM-DD');
+  }
+  if (type === 'checkbox') {
+    return (value as boolean) ? '선택됨' : '선택 안함';
+  }
+  return String(value);
+};
 
 export const DataTable: React.FC = () => {
   const { fields, records, deleteRecord, updateRecord } = useStore();
@@ -17,22 +31,25 @@ export const DataTable: React.FC = () => {
 
   const columns: ColumnsType<Record> = useMemo(
     () => [
-      ...fields.map((field) => ({
+      ...fields.map((field: Field) => ({
+        width:
+          field.label === '이름'
+            ? 120
+            : field.label === '가입일'
+              ? 200
+              : field.label === '이메일 수신 동의'
+                ? 150
+                : undefined,
         title: field.label,
         key: field.label,
         dataIndex: field.label,
         onFilter: (value: boolean | Key, record: Record) =>
-          String(record[field.label]) === String(value),
-        filters: Array.from(new Set(records.map((r) => r[field.label]))).map((value) => ({
-          value: String(value),
-          text:
-            field.type === 'date'
-              ? dayjs(value as Date).format('YYYY-MM-DD')
-              : field.type === 'checkbox'
-                ? value
-                  ? '선택됨'
-                  : '선택 안함'
-                : String(value),
+          formatValue(record[field.label], field.type) === value,
+        filters: Array.from(
+          new Set(records.map((r: Record) => formatValue(r[field.label], field.type))),
+        ).map((value) => ({
+          value,
+          text: value,
         })),
         render: (value: FieldValue, record: Record) => {
           if (field.type === 'checkbox') {
@@ -43,17 +60,14 @@ export const DataTable: React.FC = () => {
               />
             );
           }
-          if (value instanceof Date) {
-            return dayjs(value).format('YYYY-MM-DD');
-          }
-          return value;
+          return formatValue(value, field.type);
         },
       })),
       {
-        width: 80,
+        width: 48,
         title: '',
         key: 'action',
-        render: (_, record) => (
+        render: (_: unknown, record: Record) => (
           <Dropdown
             trigger={['click']}
             menu={{

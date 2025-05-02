@@ -3,7 +3,8 @@ import dayjs from 'dayjs';
 import { Dayjs } from 'dayjs';
 import { DatePicker, Checkbox, Select, Button, Input, Form } from 'antd';
 
-import { FieldValue, useStore, Record, Field } from '@/store/memberSlice';
+import { useStore } from '@/store';
+import { FieldValue, Record, Field } from '@/store/memberSlice';
 
 const { TextArea } = Input;
 
@@ -19,7 +20,7 @@ interface FormValues {
 const renderField = (field: Field) => {
   switch (field.type) {
     case 'textarea':
-      return <TextArea showCount maxLength={50} />;
+      return <TextArea showCount />;
     case 'checkbox':
       return <Checkbox />;
     case 'select':
@@ -31,9 +32,9 @@ const renderField = (field: Field) => {
         </Select>
       );
     case 'text':
-      return <Input showCount maxLength={20} />;
+      return <Input showCount />;
     case 'date':
-      return <DatePicker style={{ width: '100%' }} />;
+      return <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />;
     default:
       return null;
   }
