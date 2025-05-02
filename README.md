@@ -2,6 +2,39 @@
 
 회원 목록을 관리할 수 있는 테이블 애플리케이션입니다. 필드 타입별 커스터마이징이 가능하며, 확장성 있는 구조로 설계되었습니다.
 
+## 구현 내용
+
+### 1. 기본 구조
+- React + TypeScript + Ant Design 기반 설정
+- Vite를 사용한 개발 환경 구성
+- 덕스 패턴을 활용한 상태 관리 구조
+
+### 2. 데이터 관리
+- Zustand를 활용한 상태 관리
+- Field, Record, FieldValue 등 타입 시스템 정의
+- local-storage와 in-memory 스토리지 전환 구현
+- 날짜 데이터의 직렬화/역직렬화 처리
+
+### 3. UI 컴포넌트
+- DataTable: 회원 목록 테이블 구현
+  - 피그마에 고정된 컬럼 너비 적용 ('이름': 120px, '가입일': 200px, '이메일 수신 동의': 150px)
+  - 필드별 필터링 기능
+  - 체크박스 실시간 업데이트
+- RecordForm: 회원 정보 입력/수정 폼
+  - 필드 타입별 입력 컴포넌트 렌더링
+  - 유효성 검사 (이름 필수값, 주소 20자 제한, 메모 50자 제한)
+
+### 4. 스토리지 관리
+- STORAGE 환경변수에 따른 저장소 전환
+  - local-storage: 브라우저 새로고침 후에도 데이터 유지
+  - in-memory: 메모리 상에서만 데이터 관리
+- Zustand persist 미들웨어를 활용한 상태 지속성 관리
+
+### 5. 날짜 처리
+- dayjs를 활용한 일관된 날짜 포맷팅
+- 'YYYY-MM-DD' 형식 적용
+- Date 객체 변환 및 저장소 직렬화 처리
+
 ## 기술 스택
 
 - React
@@ -9,6 +42,8 @@
 - Ant Design (AntD)
 - Vite
 - pnpm
+- Zustand (상태 관리)
+- Day.js (날짜 처리)
 
 ## Git 컨벤션
 
@@ -37,6 +72,7 @@ main (trunk)
 | 🔧 | `:wrench:` | 설정 파일 수정 | `🔧 tsconfig 설정 변경` |
 | ✅ | `:white_check_mark:` | 테스트 추가/수정 | `✅ 필드 검증 테스트 추가` |
 | 🎉 | `:tada:` | 릴리즈 및 프로젝트 초기화 | `🎉 0.1.0 릴리즈` |
+| ➕ | `:heavy_plus_sign:` | 의존성 추가 | `➕ Dayjs 추가` |
 
 커밋 메시지 형식:
 ```
@@ -58,9 +94,10 @@ main (trunk)
 ```
 src/
 ├── app/        # 애플리케이션 메인 컴포넌트
-├── assets/     # 정적 리소스
-├── styles/     # 스타일 파일
-└── types/      # TypeScript 타입 정의
+├── shared/     # 공유 컴포넌트 및 유틸리티
+│   ├── ui/     # UI 컴포넌트
+│   └── styles/ # 스타일 파일
+└── store/      # 상태 관리
 ```
 
 ## 시작하기
@@ -70,9 +107,18 @@ src/
 - Node.js 18.0.0 이상
 - pnpm 8.0.0 이상
 
-### 설치
+### 설치 및 실행
 
 ```bash
 # 의존성 설치
 pnpm install
+
+# 개발 서버 실행 (in-memory 스토리지)
+pnpm dev
+
+# 개발 서버 실행 (local-storage 사용)
+STORAGE=local-storage pnpm dev
+
+# 개발 서버 실행 (in-memory 사용)
+STORAGE=in-memory pnpm dev
 ```
