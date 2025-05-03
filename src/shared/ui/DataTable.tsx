@@ -1,101 +1,34 @@
 import type { Key } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 
-import dayjs from 'dayjs';
-import React, { useState, useMemo } from 'react';
-import { MoreOutlined } from '@ant-design/icons';
-import { Checkbox, Dropdown, Button, Table, Modal } from 'antd';
+import { Table, Modal } from 'antd';
+import React, { useState } from 'react';
 
-import { useStore } from '@/store';
-import { RecordForm } from '@/shared/ui/RecordForm';
-import { FieldValue, Record, Field } from '@/store/memberSlice';
+export interface DataTableProps<T> {
+  records: T[];
+  rowKey?: string;
+  pageSize?: number;
+  columns: ColumnsType<T>;
+  editingRecord?: null | T;
+  isModalVisible?: boolean;
+  onEdit?: (record: null | T) => void;
+  recordFormComponent?: React.FC<{
+    onClose: () => void;
+    record: T;
+  }>;
+}
 
-const formatValue = (value: FieldValue, type: string): string => {
-  if (value === undefined || value === null) {
-    return '';
-  }
-  if (type === 'date' && value instanceof Date) {
-    return dayjs(value).format('YYYY-MM-DD');
-  }
-  if (type === 'checkbox') {
-    return (value as boolean) ? '선택됨' : '선택 안함';
-  }
-  return String(value);
-};
-
-export const DataTable: React.FC = () => {
-  const { fields, records, deleteRecord, updateRecord } = useStore();
-  const [editingRecord, setEditingRecord] = useState<Record | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+export const DataTable = <T extends { id: string }>({
+  onEdit,
+  records,
+  columns,
+  editingRecord,
+  rowKey = 'id',
+  pageSize = 10,
+  isModalVisible = false,
+  recordFormComponent: RecordFormComponent,
+}: DataTableProps<T>): React.ReactElement => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-
-  const columns: ColumnsType<Record> = useMemo(
-    () => [
-      ...fields.map((field: Field) => ({
-        width:
-          field.label === '이름'
-            ? 120
-            : field.label === '가입일'
-              ? 200
-              : field.label === '이메일 수신 동의'
-                ? 150
-                : undefined,
-        title: field.label,
-        key: field.label,
-        dataIndex: field.label,
-        onFilter: (value: boolean | Key, record: Record) =>
-          formatValue(record[field.label], field.type) === value,
-        filters: Array.from(
-          new Set(records.map((r: Record) => formatValue(r[field.label], field.type))),
-        ).map((value) => ({
-          value,
-          text: value,
-        })),
-        render: (value: FieldValue, record: Record) => {
-          if (field.type === 'checkbox') {
-            return (
-              <Checkbox
-                onChange={(e) => updateRecord(record.id, { [field.label]: e.target.checked })}
-                checked={value as boolean}
-              />
-            );
-          }
-          return formatValue(value, field.type);
-        },
-      })),
-      {
-        width: 48,
-        title: '',
-        key: 'action',
-        render: (_: unknown, record: Record) => (
-          <Dropdown
-            trigger={['click']}
-            menu={{
-              items: [
-                {
-                  label: '수정',
-                  key: 'edit',
-                  onClick: () => {
-                    setEditingRecord(record);
-                    setIsModalVisible(true);
-                  },
-                },
-                {
-                  label: '삭제',
-                  danger: true,
-                  key: 'delete',
-                  onClick: () => deleteRecord(record.id),
-                },
-              ],
-            }}
-          >
-            <Button type="text" icon={<MoreOutlined />} />
-          </Dropdown>
-        ),
-      },
-    ],
-    [fields, records, deleteRecord, updateRecord],
-  );
 
   const rowSelection = {
     selectedRowKeys,
@@ -107,31 +40,33 @@ export const DataTable: React.FC = () => {
   return (
     <>
       <Table
-        rowKey="id"
+        rowKey={rowKey}
+        pagination={{ pageSize }}
         rowSelection={rowSelection}
-        pagination={{ pageSize: 10 }}
         dataSource={records}
         columns={columns}
       />
-      <Modal
-        onCancel={() => {
-          setIsModalVisible(false);
-          setEditingRecord(null);
-        }}
-        footer={null}
-        title="레코드 수정"
-        open={isModalVisible}
-      >
-        {editingRecord && (
-          <RecordForm
+      {RecordFormComponent && editingRecord && (
+        <Modal
+          onCancel={() => {
+            if (onEdit) {
+              onEdit(null);
+            }
+          }}
+          footer={null}
+          title="레코드 수정"
+          open={isModalVisible}
+        >
+          <RecordFormComponent
             onClose={() => {
-              setIsModalVisible(false);
-              setEditingRecord(null);
+              if (onEdit) {
+                onEdit(null);
+              }
             }}
             record={editingRecord}
           />
-        )}
-      </Modal>
+        </Modal>
+      )}
     </>
   );
 };
