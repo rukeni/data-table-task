@@ -3,8 +3,8 @@ import { Layout, Button, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 import { Modal } from '@/shared/ui/Modal';
-import { MemberForm } from '@/app/members/ui/MemberForm';
-import { MembersTable } from '@/app/members/ui/MembersTable';
+import { MemberForm } from '@/members/ui/MemberForm';
+import { MembersTable } from '@/members/ui/MembersTable';
 
 const { Header, Content } = Layout;
 
