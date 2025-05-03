@@ -24,18 +24,18 @@ body {
 .ant-input, 
 .ant-select, 
 .ant-modal-content,
-.ant-table,
-.ant-menu {
+.ant-table {
   font-family: 'Pretendard' !important;
 }
 
+/* Layout */
 .ant-layout {
   background: #f0f2f5;
   font-family: 'Pretendard' !important;
+  min-height: 100vh;
 }
 
 .ant-layout-header {
-  background: white;
   padding: 8px 14px;
 }
 

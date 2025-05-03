@@ -12,7 +12,7 @@ const App: FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout>
       <Header className="header-container">
         <h1 className="header-title">회원 목록</h1>
         <Space>
