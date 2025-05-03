@@ -1,21 +1,13 @@
 import dayjs from 'dayjs';
 import { StateCreator } from 'zustand';
 
-export interface Field {
-  type: FieldType;
-  label: string;
-  required: boolean;
-}
+import { FieldValue, Record } from '@/shared/types/record';
+import { BaseField, FieldType } from '@/shared/types/field';
 
 // Types
-export type FieldType = 'textarea' | 'checkbox' | 'select' | 'text' | 'date';
+export type { FieldType };
 
-export interface Record {
-  id: string;
-  [key: string]: FieldValue;
-}
-
-export type FieldValue = boolean | string | Date;
+export type Field = BaseField;
 
 // Validation
 export const FIELD_VALIDATIONS = {

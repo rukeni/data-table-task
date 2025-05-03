@@ -16,7 +16,7 @@ export interface TypedFieldValue<T extends Field> {
 }
 
 export interface BaseField {
-  id: string;
+  id?: string;
   type: FieldType;
   label: string;
   required: boolean;
