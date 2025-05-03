@@ -16,11 +16,23 @@
 - 날짜 데이터의 직렬화/역직렬화 처리
 
 ### 3. UI 컴포넌트
-- DataTable: 회원 목록 테이블 구현
+#### 공통 UI 컴포넌트 (`shared/ui`)
+- Table: 일반적인 테이블 컴포넌트
+  - 페이지네이션
+  - 행 선택
+  - 모달 통합
+- Form: 일반적인 폼 컴포넌트
+  - 폼 상태 관리
+  - 제출 처리
+  - 초기값 설정
+  - 필드 렌더링 확장 포인트 제공
+
+#### 도메인 특화 컴포넌트 (`app/members/ui`)
+- MembersTable: 회원 목록 테이블
   - 피그마에 고정된 컬럼 너비 적용 ('이름': 120px, '가입일': 200px, '이메일 수신 동의': 150px)
   - 필드별 필터링 기능
   - 체크박스 실시간 업데이트
-- RecordForm: 회원 정보 입력/수정 폼
+- MemberForm: 회원 정보 입력/수정 폼
   - 필드 타입별 입력 컴포넌트 렌더링
   - 유효성 검사 (이름 필수값, 주소 20자 제한, 메모 50자 제한)
 
@@ -49,9 +61,9 @@
 
 ### 브랜치 전략 (TBD: Trunk-Based Development)
 
-```
-main (trunk)
+```main (trunk)
   └── feature/{feature-name}
+  └── refactor/{feature-name}
 ```
 
 - `main`: 주요 개발 브랜치 (trunk)
@@ -93,11 +105,17 @@ main (trunk)
 
 ```
 src/
-├── app/        # 애플리케이션 메인 컴포넌트
-├── shared/     # 공유 컴포넌트 및 유틸리티
-│   ├── ui/     # UI 컴포넌트
-│   └── styles/ # 스타일 파일
-└── store/      # 상태 관리
+├── app/                    # 애플리케이션 메인 컴포넌트
+│   └── members/           # 회원 도메인
+│       └── ui/            # 회원 도메인 UI 컴포넌트
+│           ├── MemberForm.tsx     # 회원 폼 특화 로직
+│           └── MembersTable.tsx   # 회원 테이블 특화 로직
+├── shared/                # 공유 컴포넌트 및 유틸리티
+│   ├── ui/               # UI 컴포넌트
+│   │   ├── Form.tsx     # 일반적인 폼 컴포넌트
+│   │   └── Table.tsx    # 일반적인 테이블 컴포넌트
+│   └── styles/           # 스타일 파일
+└── store/                # 상태 관리
 ```
 
 ## 시작하기
