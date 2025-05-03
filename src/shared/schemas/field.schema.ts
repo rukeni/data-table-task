@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import dayjs from 'dayjs';
 
+import matchPattern from '@/utils/matchPattern';
+
 const MAX_TEXT_LENGTH = 20;
 const MAX_TEXTAREA_LENGTH = 50;
 
@@ -43,41 +45,46 @@ export const fieldSchema = z.discriminatedUnion('type', [
   checkboxFieldSchema,
 ]);
 
-// 필드 값 검증을 위한 스키마
+const createSelectFieldValueSchema = (field: z.infer<typeof selectFieldSchema>) => {
+  return z.string().refine((value) => field.options.includes(value), {
+    message: '유효한 옵션이 아닙니다.',
+  });
+};
+
 export const createFieldValueSchema = (field: z.infer<typeof fieldSchema>) => {
   const baseSchema = z.object({
     fieldId: z.string().min(1, 'fieldId는 필수입니다.'),
   });
 
-  let valueSchema: z.ZodType;
-
-  switch (field.type) {
-    case 'textarea':
-      valueSchema = z
-        .string()
-        .max(MAX_TEXTAREA_LENGTH, `글자수 ${MAX_TEXTAREA_LENGTH}을 초과할 수 없습니다.`);
-      break;
-    case 'checkbox':
-      valueSchema = z.boolean();
-      break;
-    case 'select':
-      valueSchema = z
-        .string()
-        .refine((value) => field.options.includes(value), { message: '유효한 옵션이 아닙니다.' });
-      break;
-    case 'text':
-      valueSchema = z
-        .string()
-        .max(MAX_TEXT_LENGTH, `글자수 ${MAX_TEXT_LENGTH}을 초과할 수 없습니다.`);
-      break;
-    case 'date':
-      valueSchema = z.custom((data) => dayjs.isDayjs(data), {
-        message: '올바른 날짜 형식이 아닙니다.',
-      });
-      break;
-    default:
-      valueSchema = z.unknown();
-  }
+  const valueSchema = matchPattern<z.ZodType>({
+    defaultValue: z.unknown(),
+    cases: [
+      {
+        when: field.type === 'textarea',
+        then: z
+          .string()
+          .max(MAX_TEXTAREA_LENGTH, `글자수 ${MAX_TEXTAREA_LENGTH}을 초과할 수 없습니다.`),
+      },
+      {
+        then: z.boolean(),
+        when: field.type === 'checkbox',
+      },
+      {
+        when: field.type === 'select',
+        then: createSelectFieldValueSchema(field as z.infer<typeof selectFieldSchema>),
+      },
+      {
+        when: field.type === 'text',
+        then: z.string().max(MAX_TEXT_LENGTH, `글자수 ${MAX_TEXT_LENGTH}을 초과할 수 없습니다.`),
+      },
+      {
+        when: field.type === 'date',
+        then: z.custom((data) => dayjs.isDayjs(data), {
+          message: '올바른 날짜 형식이 아닙니다.',
+        }),
+      },
+    ],
+  });
 
   return baseSchema.extend({
     value: field.required ? valueSchema : valueSchema.optional(),
