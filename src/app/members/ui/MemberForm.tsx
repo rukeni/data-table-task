@@ -4,8 +4,8 @@ import React from 'react';
 import { DatePicker, Checkbox, Select, Input } from 'antd';
 
 import { useStore } from '@/store';
+import { Form } from '@/shared/ui/Form';
 import { Record, Field } from '@/store/memberSlice';
-import { RecordForm } from '@/shared/ui/RecordForm';
 
 const { TextArea } = Input;
 
@@ -67,7 +67,7 @@ export const MemberForm: React.FC<MemberFormProps> = ({ record, onClose }) => {
   const { fields, addRecord, updateRecord } = useStore();
 
   return (
-    <RecordForm
+    <Form
       onClose={onClose}
       record={record}
       fields={fields}

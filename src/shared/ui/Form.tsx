@@ -3,11 +3,11 @@ import type { Rule } from 'antd/es/form';
 import React from 'react';
 import dayjs from 'dayjs';
 import { Dayjs } from 'dayjs';
-import { Button, Form } from 'antd';
+import { Button as AntDesignButton, Form as AntDesignForm } from 'antd';
 
 import { FieldValue, Record, Field } from '@/store/memberSlice';
 
-export interface RecordFormProps {
+export interface FormProps {
   record?: Record;
   fields: Field[];
   onClose: () => void;
@@ -21,7 +21,7 @@ interface FormValues {
   [key: string]: FieldValue | Dayjs;
 }
 
-export const RecordForm: React.FC<RecordFormProps> = ({
+export const Form: React.FC<FormProps> = ({
   record,
   fields,
   onClose,
@@ -30,7 +30,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
   updateRecord,
   getFieldRules,
 }) => {
-  const [form] = Form.useForm<FormValues>();
+  const [form] = AntDesignForm.useForm<FormValues>();
 
   const onFinish = (values: FormValues) => {
     const processedValues = Object.entries(values).reduce((acc, [key, value]) => {
@@ -65,9 +65,9 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     : {};
 
   return (
-    <Form onFinish={onFinish} form={form} layout="vertical" initialValues={initialValues}>
+    <AntDesignForm onFinish={onFinish} form={form} layout="vertical" initialValues={initialValues}>
       {fields.map((field) => (
-        <Form.Item
+        <AntDesignForm.Item
           key={field.label}
           valuePropName={field.type === 'checkbox' ? 'checked' : 'value'}
           name={field.label}
@@ -75,13 +75,13 @@ export const RecordForm: React.FC<RecordFormProps> = ({
           rules={getFieldRules(field)}
         >
           {renderField(field)}
-        </Form.Item>
+        </AntDesignForm.Item>
       ))}
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
+      <AntDesignForm.Item>
+        <AntDesignButton type="primary" htmlType="submit">
           {record ? '수정' : '추가'}
-        </Button>
-      </Form.Item>
-    </Form>
+        </AntDesignButton>
+      </AntDesignForm.Item>
+    </AntDesignForm>
   );
 };

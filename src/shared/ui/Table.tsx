@@ -1,10 +1,10 @@
 import type { Key } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 
-import { Table, Modal } from 'antd';
 import React, { useState } from 'react';
+import { Table as AntDesignTable, Modal as AntDesignModal } from 'antd';
 
-export interface DataTableProps<T> {
+export interface TableProps<T> {
   records: T[];
   rowKey?: string;
   pageSize?: number;
@@ -18,7 +18,7 @@ export interface DataTableProps<T> {
   }>;
 }
 
-export const DataTable = <T extends { id: string }>({
+export const Table = <T extends { id: string }>({
   onEdit,
   records,
   columns,
@@ -27,7 +27,7 @@ export const DataTable = <T extends { id: string }>({
   pageSize = 10,
   isModalVisible = false,
   recordFormComponent: RecordFormComponent,
-}: DataTableProps<T>): React.ReactElement => {
+}: TableProps<T>): React.ReactElement => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
   const rowSelection = {
@@ -39,7 +39,7 @@ export const DataTable = <T extends { id: string }>({
 
   return (
     <>
-      <Table
+      <AntDesignTable
         rowKey={rowKey}
         pagination={{ pageSize }}
         rowSelection={rowSelection}
@@ -47,7 +47,7 @@ export const DataTable = <T extends { id: string }>({
         columns={columns}
       />
       {RecordFormComponent && editingRecord && (
-        <Modal
+        <AntDesignModal
           onCancel={() => {
             if (onEdit) {
               onEdit(null);
@@ -65,7 +65,7 @@ export const DataTable = <T extends { id: string }>({
             }}
             record={editingRecord}
           />
-        </Modal>
+        </AntDesignModal>
       )}
     </>
   );

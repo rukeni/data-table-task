@@ -9,7 +9,7 @@ import { MoreOutlined } from '@ant-design/icons';
 import { Checkbox, Dropdown, Button } from 'antd';
 
 import { useStore } from '@/store';
-import { DataTable } from '@/shared/ui/DataTable';
+import { Table } from '@/shared/ui/Table';
 
 import { MemberForm } from './MemberForm';
 
@@ -102,7 +102,7 @@ export const MembersTable: React.FC = () => {
   );
 
   return (
-    <DataTable<Record>
+    <Table<Record>
       onEdit={handleEdit}
       recordFormComponent={MemberForm}
       pageSize={10}
