@@ -9,11 +9,12 @@ import type {
   DateField,
 } from '@/shared/types/field';
 
-import React from 'react';
+import React, { JSX } from 'react';
 import { DatePicker, Checkbox, Select, Input } from 'antd';
 
 import { useStore } from '@/store';
 import { Form } from '@/shared/ui/Form';
+import matchPattern from '@/utils/matchPattern';
 import { Record, Field } from '@/store/memberSlice';
 import { validateFieldValue } from '@/utils/validation';
 
@@ -25,26 +26,37 @@ interface MemberFormProps {
 }
 
 const renderField = (field: Field) => {
-  switch (field.type) {
-    case 'textarea':
-      return <TextArea showCount />;
-    case 'checkbox':
-      return <Checkbox />;
-    case 'select':
-      return (
-        <Select>
-          <Select.Option value="개발자">개발자</Select.Option>
-          <Select.Option value="PO">PO</Select.Option>
-          <Select.Option value="디자이너">디자이너</Select.Option>
-        </Select>
-      );
-    case 'text':
-      return <Input showCount />;
-    case 'date':
-      return <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />;
-    default:
-      return null;
-  }
+  return matchPattern<JSX.Element | null>({
+    defaultValue: null,
+    cases: [
+      {
+        then: <TextArea showCount />,
+        when: field.type === 'textarea',
+      },
+      {
+        then: <Checkbox />,
+        when: field.type === 'checkbox',
+      },
+      {
+        when: field.type === 'select',
+        then: (
+          <Select>
+            <Select.Option value="개발자">개발자</Select.Option>
+            <Select.Option value="PO">PO</Select.Option>
+            <Select.Option value="디자이너">디자이너</Select.Option>
+          </Select>
+        ),
+      },
+      {
+        then: <Input showCount />,
+        when: field.type === 'text',
+      },
+      {
+        when: field.type === 'date',
+        then: <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />,
+      },
+    ],
+  });
 };
 
 const convertToValidationField = (field: Field): ValidationField => {
@@ -54,36 +66,44 @@ const convertToValidationField = (field: Field): ValidationField => {
     required: field.required,
   };
 
-  switch (field.type) {
-    case 'textarea':
-      return {
-        ...baseField,
-        type: 'textarea',
-      } as TextAreaField;
-    case 'checkbox':
-      return {
-        ...baseField,
-        type: 'checkbox',
-      } as CheckboxField;
-    case 'select':
-      return {
-        ...baseField,
-        type: 'select',
-        options: ['개발자', 'PO', '디자이너'], // 하드코딩된 옵션들을 상수로 분리하는 것이 좋습니다
-      } as SelectField;
-    case 'text':
-      return {
-        ...baseField,
-        type: 'text',
-      } as TextField;
-    case 'date':
-      return {
-        ...baseField,
-        type: 'date',
-      } as DateField;
-    default:
-      throw new Error(`Unsupported field type: ${field.type}`);
-  }
+  return matchPattern<ValidationField>({
+    defaultValue: {
+      ...baseField,
+      type: 'text',
+    } as TextField,
+    cases: [
+      {
+        when: field.type === 'textarea',
+        then: {
+          ...baseField,
+          type: 'textarea',
+        } as TextAreaField,
+      },
+      {
+        when: field.type === 'checkbox',
+        then: {
+          ...baseField,
+          type: 'checkbox',
+        } as CheckboxField,
+      },
+      {
+        when: field.type === 'select',
+        then: {
+          ...baseField,
+          type: 'select',
+          options: ['개발자', 'PO', '디자이너'],
+        } as SelectField,
+      },
+
+      {
+        when: field.type === 'date',
+        then: {
+          ...baseField,
+          type: 'date',
+        } as DateField,
+      },
+    ],
+  });
 };
 
 const getFieldRules = (field: Field): Rule[] => {
