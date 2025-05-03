@@ -4,26 +4,54 @@ import type { ColumnsType } from 'antd/es/table';
 import type { FieldValue, Record, Field } from '@/store/memberSlice';
 
 import dayjs from 'dayjs';
-import React, { useState, useMemo } from 'react';
 import { MoreOutlined } from '@ant-design/icons';
 import { Checkbox, Dropdown, Button } from 'antd';
+import React, { useState, useMemo, JSX } from 'react';
 
 import { useStore } from '@/store';
 import { Table } from '@/shared/ui/Table';
+import matchPattern from '@/utils/matchPattern';
 
 import { MemberForm } from './MemberForm';
 
 const formatValue = (value: FieldValue, type: string): string => {
-  if (value === undefined || value === null) {
-    return '';
-  }
-  if (type === 'date' && value instanceof Date) {
-    return dayjs(value).format('YYYY-MM-DD');
-  }
-  if (type === 'checkbox') {
-    return (value as boolean) ? '선택됨' : '선택 안함';
-  }
-  return String(value);
+  return matchPattern<string>({
+    defaultValue: String(value ?? ''),
+    cases: [
+      {
+        then: '',
+        when: value === undefined || value === null,
+      },
+      {
+        when: type === 'date' && value instanceof Date,
+        then: () => dayjs(value as Date).format('YYYY-MM-DD'),
+      },
+      {
+        when: type === 'checkbox',
+        then: (value as boolean) ? '선택됨' : '선택 안함',
+      },
+    ],
+  });
+};
+
+const getColumnWidth = (fieldLabel: string): undefined | number => {
+  return matchPattern<undefined | number>({
+    defaultValue: undefined,
+    cases: [
+      {
+        then: 120,
+        when: fieldLabel === '이름',
+      },
+      {
+        then: 200,
+        when: fieldLabel === '가입일',
+      },
+      {
+        then: 150,
+        when: fieldLabel === '이메일 수신 동의',
+      },
+    ],
+  });
 };
 
 export const MembersTable: React.FC = () => {
@@ -39,14 +67,7 @@ export const MembersTable: React.FC = () => {
   const columns: ColumnsType<Record> = useMemo(
     () => [
       ...fields.map((field: Field) => ({
-        width:
-          field.label === '이름'
-            ? 120
-            : field.label === '가입일'
-              ? 200
-              : field.label === '이메일 수신 동의'
-                ? 150
-                : undefined,
+        width: getColumnWidth(field.label),
         title: field.label,
         key: field.label,
         dataIndex: field.label,
@@ -59,15 +80,20 @@ export const MembersTable: React.FC = () => {
           text: value,
         })),
         render: (value: FieldValue, record: Record) => {
-          if (field.type === 'checkbox') {
-            return (
-              <Checkbox
-                onChange={(e) => updateRecord(record.id, { [field.label]: e.target.checked })}
-                checked={value as boolean}
-              />
-            );
-          }
-          return formatValue(value, field.type);
+          return matchPattern<JSX.Element | string>({
+            defaultValue: formatValue(value, field.type),
+            cases: [
+              {
+                when: field.type === 'checkbox',
+                then: (
+                  <Checkbox
+                    onChange={(e) => updateRecord(record.id, { [field.label]: e.target.checked })}
+                    checked={value as boolean}
+                  />
+                ),
+              },
+            ],
+          });
         },
       })),
       {
