@@ -1,14 +1,17 @@
 import type { Key } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 
+import type { FieldValue, Record, Field } from '@/store/memberSlice';
+
 import dayjs from 'dayjs';
 import React, { useState, useMemo } from 'react';
 import { MoreOutlined } from '@ant-design/icons';
-import { Checkbox, Dropdown, Button, Table, Modal } from 'antd';
+import { Checkbox, Dropdown, Button } from 'antd';
 
 import { useStore } from '@/store';
-import { RecordForm } from '@/shared/ui/RecordForm';
-import { FieldValue, Record, Field } from '@/store/memberSlice';
+import { Table } from '@/shared/ui/Table';
+
+import { MemberForm } from './MemberForm';
 
 const formatValue = (value: FieldValue, type: string): string => {
   if (value === undefined || value === null) {
@@ -23,11 +26,15 @@ const formatValue = (value: FieldValue, type: string): string => {
   return String(value);
 };
 
-export const DataTable: React.FC = () => {
+export const MembersTable: React.FC = () => {
   const { fields, records, deleteRecord, updateRecord } = useStore();
   const [editingRecord, setEditingRecord] = useState<Record | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+
+  const handleEdit = (record: Record | null) => {
+    setEditingRecord(record);
+    setIsModalVisible(!!record);
+  };
 
   const columns: ColumnsType<Record> = useMemo(
     () => [
@@ -75,10 +82,7 @@ export const DataTable: React.FC = () => {
                 {
                   label: '수정',
                   key: 'edit',
-                  onClick: () => {
-                    setEditingRecord(record);
-                    setIsModalVisible(true);
-                  },
+                  onClick: () => handleEdit(record),
                 },
                 {
                   label: '삭제',
@@ -97,41 +101,15 @@ export const DataTable: React.FC = () => {
     [fields, records, deleteRecord, updateRecord],
   );
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (newSelectedRowKeys: Key[]) => {
-      setSelectedRowKeys(newSelectedRowKeys);
-    },
-  };
-
   return (
-    <>
-      <Table
-        rowKey="id"
-        rowSelection={rowSelection}
-        pagination={{ pageSize: 10 }}
-        dataSource={records}
-        columns={columns}
-      />
-      <Modal
-        onCancel={() => {
-          setIsModalVisible(false);
-          setEditingRecord(null);
-        }}
-        footer={null}
-        title="레코드 수정"
-        open={isModalVisible}
-      >
-        {editingRecord && (
-          <RecordForm
-            onClose={() => {
-              setIsModalVisible(false);
-              setEditingRecord(null);
-            }}
-            record={editingRecord}
-          />
-        )}
-      </Modal>
-    </>
+    <Table<Record>
+      onEdit={handleEdit}
+      recordFormComponent={MemberForm}
+      pageSize={10}
+      records={records}
+      columns={columns}
+      editingRecord={editingRecord}
+      isModalVisible={isModalVisible}
+    />
   );
 };
