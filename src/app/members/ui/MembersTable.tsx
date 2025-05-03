@@ -1,7 +1,8 @@
 import type { Key } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 
-import type { FieldValue, Record, Field } from '@/store/memberSlice';
+import type { BaseField } from '@/shared/types/field';
+import type { FieldValue, Record } from '@/shared/types/record';
 
 import dayjs from 'dayjs';
 import { MoreOutlined } from '@ant-design/icons';
@@ -10,7 +11,7 @@ import React, { useState, useMemo, JSX } from 'react';
 
 import { useStore } from '@/store';
 import { Table } from '@/shared/ui/Table';
-import matchPattern from '@/utils/matchPattern';
+import matchPattern from '@/shared/utils/matchPattern';
 
 import { MemberForm } from './MemberForm';
 
@@ -66,7 +67,7 @@ export const MembersTable: React.FC = () => {
 
   const columns: ColumnsType<Record> = useMemo(
     () => [
-      ...fields.map((field: Field) => ({
+      ...fields.map((field: BaseField) => ({
         width: getColumnWidth(field.label),
         title: field.label,
         key: field.label,

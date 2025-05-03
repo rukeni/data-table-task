@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import dayjs from 'dayjs';
 
-import matchPattern from '@/utils/matchPattern';
+import matchPattern from '@/shared/utils/matchPattern';
 
 const MAX_TEXT_LENGTH = 20;
 const MAX_TEXTAREA_LENGTH = 50;
@@ -10,7 +10,7 @@ const fieldTypes = ['text', 'textarea', 'date', 'select', 'checkbox'] as const;
 export const fieldTypeSchema = z.enum(fieldTypes);
 
 export const baseFieldSchema = z.object({
-  id: z.string().min(1, 'ID는 필수입니다.'),
+  id: z.string().min(1, 'ID는 필수입니다.').optional(),
   type: fieldTypeSchema,
   label: z.string().min(1, '라벨은 필수입니다.'),
   required: z.boolean(),

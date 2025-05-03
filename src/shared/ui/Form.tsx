@@ -1,25 +1,9 @@
-import type { Rule } from 'antd/es/form';
+import type { FormValues, FormProps } from '../types/form';
 
 import React from 'react';
 import dayjs from 'dayjs';
 import { Dayjs } from 'dayjs';
 import { Button as AntDesignButton, Form as AntDesignForm } from 'antd';
-
-import { FieldValue, Record, Field } from '@/store/memberSlice';
-
-export interface FormProps {
-  record?: Record;
-  fields: Field[];
-  onClose: () => void;
-  getFieldRules: (field: Field) => Rule[];
-  renderField: (field: Field) => React.ReactNode;
-  addRecord: (record: Omit<Record, 'id'>) => void;
-  updateRecord: (id: string, updates: Partial<Record>) => void;
-}
-
-interface FormValues {
-  [key: string]: FieldValue | Dayjs;
-}
 
 export const Form: React.FC<FormProps> = ({
   record,

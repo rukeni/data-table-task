@@ -1,25 +1,10 @@
-import type { TypedFieldValue, Field } from '../shared/types/field';
+import type { Field } from '../shared/types/field';
+import type { ValidationResult } from '../shared/types/validation';
+import type { UseFieldValidationResult } from '../shared/types/hooks';
 
 import { useCallback, useState } from 'react';
 
-import {
-  type ValidationResult,
-  validateFieldValues,
-  validateFieldValue,
-  validateField,
-} from '../utils/validation';
-
-interface UseFieldValidationResult<T extends Field> {
-  isValid: boolean;
-  validateSingleField: (field: unknown) => ValidationResult<Field>;
-  validateSingleValue: (value: unknown, field: T) => ValidationResult<TypedFieldValue<T>>;
-  validateMultipleValues: (
-    values: unknown[],
-    fields: T[],
-  ) => ValidationResult<TypedFieldValue<T>[]>;
-  clearError: () => void;
-  lastError: string | null;
-}
+import { validateFieldValues, validateFieldValue, validateField } from '@/shared/utils/validation';
 
 export const useFieldValidation = <T extends Field>(): UseFieldValidationResult<T> => {
   const [lastError, setLastError] = useState<string | null>(null);

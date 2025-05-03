@@ -7,6 +7,7 @@ import type {
   SelectField,
   TextField,
   DateField,
+  BaseField,
 } from '@/shared/types/field';
 
 import React, { JSX } from 'react';
@@ -14,9 +15,9 @@ import { DatePicker, Checkbox, Select, Input } from 'antd';
 
 import { useStore } from '@/store';
 import { Form } from '@/shared/ui/Form';
-import matchPattern from '@/utils/matchPattern';
-import { Record, Field } from '@/store/memberSlice';
-import { validateFieldValue } from '@/utils/validation';
+import { Record } from '@/shared/types/record';
+import matchPattern from '@/shared/utils/matchPattern';
+import { validateFieldValue } from '@/shared/utils/validation';
 
 const { TextArea } = Input;
 
@@ -25,7 +26,7 @@ interface MemberFormProps {
   onClose: () => void;
 }
 
-const renderField = (field: Field) => {
+const renderField = (field: BaseField) => {
   return matchPattern<JSX.Element | null>({
     defaultValue: null,
     cases: [
@@ -59,7 +60,7 @@ const renderField = (field: Field) => {
   });
 };
 
-const convertToValidationField = (field: Field): ValidationField => {
+const convertToValidationField = (field: BaseField): ValidationField => {
   const baseField = {
     id: `${field.type}-${field.label}`,
     label: field.label,
@@ -106,7 +107,7 @@ const convertToValidationField = (field: Field): ValidationField => {
   });
 };
 
-const getFieldRules = (field: Field): Rule[] => {
+const getFieldRules = (field: BaseField): Rule[] => {
   const rules: Rule[] = [];
 
   // 기본 required 규칙

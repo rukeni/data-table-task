@@ -1,22 +1,9 @@
 import type { Key } from 'react';
-import type { ColumnsType } from 'antd/es/table';
+
+import type { TableProps } from '../types/table';
 
 import React, { useState } from 'react';
 import { Table as AntDesignTable, Modal as AntDesignModal } from 'antd';
-
-export interface TableProps<T> {
-  records: T[];
-  rowKey?: string;
-  pageSize?: number;
-  columns: ColumnsType<T>;
-  editingRecord?: null | T;
-  isModalVisible?: boolean;
-  onEdit?: (record: null | T) => void;
-  recordFormComponent?: React.FC<{
-    onClose: () => void;
-    record: T;
-  }>;
-}
 
 export const Table = <T extends { id: string }>({
   onEdit,
