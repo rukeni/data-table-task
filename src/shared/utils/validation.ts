@@ -1,20 +1,9 @@
-import type { TypedFieldValue, Field } from '../shared/types/field';
+import type { ValidationResult } from '@/shared/types/validation';
+import type { TypedFieldValue, Field } from '@/shared/types/field';
 
 import { z } from 'zod';
 
-import { createFieldValueSchema, fieldSchema } from '../shared/schemas/field.schema';
-
-export interface ValidationError {
-  message: string;
-  path: (string | number)[];
-  code?: 'VALIDATION_ERROR' | 'UNKNOWN_ERROR' | z.ZodIssueCode;
-}
-
-export interface ValidationResult<T = unknown> {
-  data?: T;
-  success: boolean;
-  errors: ValidationError[];
-}
+import { createFieldValueSchema, fieldSchema } from '@/shared/schemas/field.schema';
 
 export const validateField = (field: unknown): ValidationResult<Field> => {
   try {
