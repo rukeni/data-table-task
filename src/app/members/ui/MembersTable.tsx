@@ -10,7 +10,8 @@ import { Checkbox, Dropdown, Button } from 'antd';
 
 import { useStore } from '@/store';
 import { DataTable } from '@/shared/ui/DataTable';
-import { RecordForm } from '@/shared/ui/RecordForm';
+
+import { MemberForm } from './MemberForm';
 
 const formatValue = (value: FieldValue, type: string): string => {
   if (value === undefined || value === null) {
@@ -103,7 +104,7 @@ export const MembersTable: React.FC = () => {
   return (
     <DataTable<Record>
       onEdit={handleEdit}
-      recordFormComponent={RecordForm}
+      recordFormComponent={MemberForm}
       pageSize={10}
       records={records}
       columns={columns}

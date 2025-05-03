@@ -2,7 +2,7 @@ import { useState, FC } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Layout, Button, Space, Modal } from 'antd';
 
-import { RecordForm } from '@/shared/ui/RecordForm';
+import { MemberForm } from '@/app/members/ui/MemberForm';
 import { MembersTable } from '@/app/members/ui/MembersTable';
 
 const { Header, Content } = Layout;
@@ -47,7 +47,7 @@ const App: FC = () => {
           footer={null}
           open={isModalVisible}
         >
-          <RecordForm onClose={() => setIsModalVisible(false)} />
+          <MemberForm onClose={() => setIsModalVisible(false)} />
         </Modal>
       </Content>
     </Layout>
