@@ -1,6 +1,6 @@
-import type { Field } from '../shared/types/field';
-import type { ValidationResult } from '../shared/types/validation';
-import type { UseFieldValidationResult } from '../shared/types/hooks';
+import type { Field } from '../types/field';
+import type { ValidationResult } from '../types/validation';
+import type { UseFieldValidationResult } from '../types/hooks';
 
 import { useCallback, useState } from 'react';
 

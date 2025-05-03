@@ -24,18 +24,18 @@ body {
 .ant-input, 
 .ant-select, 
 .ant-modal-content,
-.ant-table,
-.ant-menu {
+.ant-table {
   font-family: 'Pretendard' !important;
 }
 
+/* Layout */
 .ant-layout {
   background: #f0f2f5;
   font-family: 'Pretendard' !important;
+  min-height: 100vh;
 }
 
 .ant-layout-header {
-  background: white;
   padding: 8px 14px;
 }
 
@@ -43,4 +43,30 @@ body {
   background: white;
   border-radius: 8px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+/* Header */
+.header-container {
+  display: flex;
+  align-items: center;
+  background-color: white;
+}
+
+.header-title {
+  flex: 1;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+
+/* Form */
+.form-action-container {
+  text-align: right;
+}
+
+.form-action-button {
+  margin-left: 8px;
 } 

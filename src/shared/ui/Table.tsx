@@ -3,7 +3,9 @@ import type { Key } from 'react';
 import type { TableProps } from '../types/table';
 
 import React, { useState } from 'react';
-import { Table as AntDesignTable, Modal as AntDesignModal } from 'antd';
+import { Table as AntDesignTable } from 'antd';
+
+import { Modal } from './Modal';
 
 export const Table = <T extends { id: string }>({
   onEdit,
@@ -34,7 +36,7 @@ export const Table = <T extends { id: string }>({
         columns={columns}
       />
       {RecordFormComponent && editingRecord && (
-        <AntDesignModal
+        <Modal
           onCancel={() => {
             if (onEdit) {
               onEdit(null);
@@ -52,7 +54,7 @@ export const Table = <T extends { id: string }>({
             }}
             record={editingRecord}
           />
-        </AntDesignModal>
+        </Modal>
       )}
     </>
   );
