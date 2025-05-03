@@ -66,36 +66,44 @@ const convertToValidationField = (field: Field): ValidationField => {
     required: field.required,
   };
 
-  switch (field.type) {
-    case 'textarea':
-      return {
-        ...baseField,
-        type: 'textarea',
-      } as TextAreaField;
-    case 'checkbox':
-      return {
-        ...baseField,
-        type: 'checkbox',
-      } as CheckboxField;
-    case 'select':
-      return {
-        ...baseField,
-        type: 'select',
-        options: ['개발자', 'PO', '디자이너'], // 하드코딩된 옵션들을 상수로 분리하는 것이 좋습니다
-      } as SelectField;
-    case 'text':
-      return {
-        ...baseField,
-        type: 'text',
-      } as TextField;
-    case 'date':
-      return {
-        ...baseField,
-        type: 'date',
-      } as DateField;
-    default:
-      throw new Error(`Unsupported field type: ${field.type}`);
-  }
+  return matchPattern<ValidationField>({
+    defaultValue: {
+      ...baseField,
+      type: 'text',
+    } as TextField,
+    cases: [
+      {
+        when: field.type === 'textarea',
+        then: {
+          ...baseField,
+          type: 'textarea',
+        } as TextAreaField,
+      },
+      {
+        when: field.type === 'checkbox',
+        then: {
+          ...baseField,
+          type: 'checkbox',
+        } as CheckboxField,
+      },
+      {
+        when: field.type === 'select',
+        then: {
+          ...baseField,
+          type: 'select',
+          options: ['개발자', 'PO', '디자이너'],
+        } as SelectField,
+      },
+
+      {
+        when: field.type === 'date',
+        then: {
+          ...baseField,
+          type: 'date',
+        } as DateField,
+      },
+    ],
+  });
 };
 
 const getFieldRules = (field: Field): Rule[] => {
