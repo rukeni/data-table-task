@@ -109,12 +109,12 @@ export const Form: React.FC<FormProps> = ({
           {renderField(field)}
         </AntDesignForm.Item>
       ))}
-      <AntDesignForm.Item style={{ textAlign: 'right' }}>
+      <AntDesignForm.Item className="form-action-container">
         <AntDesignButton onClick={onClose}>취소</AntDesignButton>
         <AntDesignButton
           type="primary"
+          className="form-action-button"
           disabled={!formValid}
-          style={{ marginLeft: '8px' }}
           htmlType="submit"
         >
           {record ? '수정' : '추가'}
